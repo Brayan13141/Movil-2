@@ -81,6 +81,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation ("com.google.code.gson:gson:2.8.8")
 
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.0")
+
     implementation("org.simpleframework:simple-xml:2.7.1")
     // Retrofit
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")

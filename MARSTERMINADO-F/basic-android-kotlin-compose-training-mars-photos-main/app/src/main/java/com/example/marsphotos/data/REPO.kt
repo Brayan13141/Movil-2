@@ -1,6 +1,7 @@
 package com.example.marsphotos.data
 
 import android.util.Log
+import com.example.marsphotos.model.ALUMNO
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -25,22 +26,17 @@ class Iniciar(
 ) : REPO
 {
     override suspend fun Login(matricula: String, password: String): Boolean {
-       // Log.d("XML",XMLA.toString())
         val PETICION = XMLA.toRequestBody()
-
-        Log.d("PETICION XML-REQUEST",PETICION.toString())
-
+        //Log.d("PETICION XML-REQUEST",PETICION.toString())
         Login.Cookies()
-
-        Log.d("Cookies",Login.Cookies().toString())
 
         var respuesta = Login.Login(PETICION).string().split("{","}")
         Log.d("RESPUESTA",respuesta.toString())
-
         if(respuesta !=null)
         {
-            val result = Gson().fromJson("{"+respuesta[1] +"}", Login::class.java)
-            Log.d("RESPUESTA",result.toString())
+           val result = Gson().fromJson("{"+respuesta[1] +"}", ALUMNO::class.java)
+            Log.d("RESPUESTA", result.toString())
+            //Log.d("RESPUESTA", result.Login.toString)
         }
         return true;
     }

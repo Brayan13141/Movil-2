@@ -15,11 +15,14 @@ private const val BASE_URL =
 
 class DefaultContainer: Container
 {
-    val cliente = OkHttpClient.Builder()
+      val interceptor= CookiesInterceptor()
+
+      val cliente = OkHttpClient.Builder().addInterceptor(interceptor).build()
+
 
     val retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
-        .addConverterFactory(SimpleXmlConverterFactory.create()).client(cliente.build())
+        .addConverterFactory(SimpleXmlConverterFactory.create()).client(cliente)
         .build()
 
       val REPOLogin: InterLogin by lazy {
