@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.marsphotos.data.VIEWLOGIN
+import com.example.marsphotos.model.ALUMNO
 import com.example.marsphotos.ui.screens.PantallaInicio
 import com.example.marsphotos.ui.screens.PantallaSesion
 
@@ -26,6 +27,7 @@ fun App(
         }
         composable(PantallasNav.SESION.route) {
             PantallaSesion(myViewModel, modifier = Modifier,navController)
+            //PantallaSesion(alumno = ALUMNO)
         }
     }
 }

@@ -16,7 +16,7 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface REPO{
-    suspend fun Login(matricula: String, password: String): Boolean
+    suspend fun Login(matricula: String, password: String): ALUMNO
     suspend fun Info(): String
 }
 class Iniciar(
@@ -25,7 +25,7 @@ class Iniciar(
     var XMLA : String = XMLAcceso.trimIndent()
 ) : REPO
 {
-    override suspend fun Login(matricula: String, password: String): Boolean {
+    override suspend fun Login(matricula: String, password: String): ALUMNO {
         val PETICION = XMLA.toRequestBody()
         //Log.d("PETICION XML-REQUEST",PETICION.toString())
         Login.Cookies()
@@ -37,8 +37,9 @@ class Iniciar(
            val result = Gson().fromJson("{"+respuesta[1] +"}", ALUMNO::class.java)
             Log.d("RESPUESTA", result.toString())
             //Log.d("RESPUESTA", result.Login.toString)
+            return result;
         }
-        return true;
+        return ALUMNO("","","","",);
     }
 
     override suspend fun Info(): String {
