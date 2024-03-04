@@ -1,7 +1,9 @@
 package com.example.marsphotos.data
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -21,15 +23,30 @@ import java.lang.reflect.AccessibleObject
 
 class VIEWLOGIN(Acciones: REPO) : ViewModel() {
     var AL by mutableStateOf(ALUMNO("","","",""))
+    var Ncontrol by mutableStateOf("S20120185")
+    var Contraseña by mutableStateOf("P%o48D_")
 
-    val Ac =Acciones
+    val Acciones =Acciones
 
 
-    fun obtenerDatos(M : String, C : String)
+    fun fNcontrol(value: String){
+        Ncontrol = value
+    }
+
+    fun fContraseña(value: String){
+        Contraseña = value
+    }
+
+    fun IniciarSesion(M : String, C : String) : Boolean
     {
         viewModelScope.launch {
-          AL = Ac.Login(M,C)
+          AL = Acciones.Login(M,C)
         }
+        if (AL.matricula != "")
+        {
+            return true
+        }else
+        return false
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.marsphotos.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,12 +19,14 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.marsphotos.R
 import com.example.marsphotos.data.VIEWLOGIN
 import com.example.marsphotos.model.ALUMNO
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -63,9 +67,10 @@ fun PantallaSesion2(
 
 @Composable
 fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
-                   //alumno: ALUMNO
                    navController: NavController
 ) {
+
+    val Rutina = rememberCoroutineScope()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -99,6 +104,13 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             CampoDetalle(icon = Icons.Default.Lock, label = "Contraseña", value = alumno.contrasenia)
             CampoDetalle(icon = Icons.Default.Warning, label = "Estatus", value = alumno.estatus)
             CampoDetalle(icon = Icons.Default.Check, label = "Acceso", value = alumno.acceso)
+            Button(onClick = {
+                Rutina.launch {
+                    viewModel.Acciones.CargaAcademicaByAlumno()
+                    Log.d("ENTRO","--------------------")
+                } }) {
+                Text(text = "CARGA")
+            }
         }
     }
 }

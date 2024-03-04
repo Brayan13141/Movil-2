@@ -28,12 +28,11 @@ class DefaultContainer: Container
       val REPOLogin: InterLogin by lazy {
         retrofit.create(InterLogin::class.java)
     }
-
-      val REPOinfo: InterInfo by lazy {
-        retrofit.create(InterInfo::class.java)
+      val REPOCarga:  CargaAcademicaByAlumno by lazy {
+        retrofit.create(CargaAcademicaByAlumno::class.java)
     }
     override val REP: REPO by lazy {
-        Iniciar(REPOLogin, REPOinfo)
+        Iniciar(REPOLogin, REPOCarga)
     }
 
 }

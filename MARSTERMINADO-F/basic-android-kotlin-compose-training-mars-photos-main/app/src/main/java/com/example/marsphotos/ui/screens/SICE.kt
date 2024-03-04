@@ -5,10 +5,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,14 +29,14 @@ import com.example.marsphotos.R
 import com.example.marsphotos.data.REPO
 import com.example.marsphotos.data.VIEWLOGIN
 import com.example.marsphotos.ui.Nav.PantallasNav
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 @Composable
 fun PantallaInicio(
     viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory),
     navController: NavController
 ) {
-    var Ncontrol by remember { mutableStateOf("S20120185") }
-    var Contraseña by remember { mutableStateOf("P%o48D_") }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -45,37 +48,54 @@ fun PantallaInicio(
             painter = painterResource(R.drawable.loading_img),
             contentDescription = stringResource(R.string.loading)
         )
-
-        // Campo de usuario
-        CampoTexto("USUARIO", Ncontrol) {
-            Ncontrol = it
+        TextField(value = viewModel.Ncontrol,
+            onValueChange = {viewModel.fNcontrol(it)}
+        )
+        TextField(value = viewModel.Contraseña,
+            onValueChange = {viewModel.fContraseña(it)}
+        )
+        var B by remember {
+          mutableStateOf(true)
         }
-
-        // Campo de contraseña
-        CampoTexto("CONTRASEÑA", Contraseña) {
-            Contraseña = it
-        }
-
-        // Botón de inicio de sesión
-        val scope = rememberCoroutineScope()
+        val Rutina = rememberCoroutineScope()
         BotonIngresar {
-            scope.launch {
-                Log.d("BOTON", "ENTRO!")
-                viewModel.obtenerDatos(Ncontrol,Contraseña)
-                navController.navigate(PantallasNav.SESION.route)
+            Rutina.launch {
+                B = viewModel.IniciarSesion(viewModel.Ncontrol,viewModel.Contraseña)
+                if (B)
+                {
+                    navController.navigate(PantallasNav.SESION.route)
+                }
             }
         }
+        if (B==false) {
+                B = SimpleErrorDialog()
+
+        }
     }
 }
-
 @Composable
-private fun CampoTexto(label: String, value: String, onValueChange: (String) -> Unit) {
-    Column {
-        Text(text = label)
-        TextField(value = value, onValueChange = onValueChange)
-    }
-}
+fun SimpleErrorDialog(): Boolean {
+    var dialogClosed by remember { mutableStateOf(false) }
 
+    if (!dialogClosed) {
+        AlertDialog(
+            onDismissRequest = {
+                dialogClosed = true
+            },
+            title = { Text("Error") },
+            text = { Text("Hubo un error al procesar la solicitud.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    dialogClosed = true
+                }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
+    return dialogClosed
+}
 @Composable
 private fun BotonIngresar(onClick: () -> Unit) {
     Button(
