@@ -48,23 +48,23 @@ class Iniciar(
         // Si hay algún error, o la respuesta es nula, devuelve un objeto ALUMNO con valores por defecto.
         return ALUMNO("", "", "", "")
     }
-
-
     override suspend fun CargaAcademicaByAlumno(): String {
         try {
             val PETICION = XMLC.toRequestBody()
-
+            var lista = mutableListOf<CargaAcademicaItem>()
             var respuesta = CARGA.CARGA(PETICION).string().split("{", "}")
             Log.d("RESPUESTA", respuesta.toString())
-            des(respuesta.toString())
 
             if (respuesta != null) {
-            var lista = mutableListOf<CargaAcademicaItem>()
-                val result = Gson().fromJson("{"+respuesta[1] +"}", CargaAcademicaItem::class.java)
-                    //lista.add(result)
-                    Log.d("RESULTADO", result.toString())
+             var Tamres = respuesta.toString().length
+                var count =  1
+                Log.d("-------- ", respuesta.toString().indexOf("Semipresencial").toString()+ " TAMAÑO "+ respuesta.toString().indexOf(", ,").toString())
 
-                Log.d("RESULTADO", lista.toString())
+                     val objetoA = des(respuesta.toString().substring(count,Tamres-10))
+
+                    Log.d("OBJ ", objetoA.toString())
+
+               // Log.d("RESULTADO", lista.toString())
 
                 return respuesta.toString()
             }
@@ -78,12 +78,22 @@ class Iniciar(
     }
 
 }
-fun des(Respuesta:String)
-{
-    var lista = mutableListOf<String>()
-    lista.add(Respuesta.substring(Respuesta.indexOf("Semipresencial"),Respuesta.indexOf(", ,")) )
-    Log.d("RESPUESTA DES",lista.toString())
+data class OBJ(val CARGA: CargaAcademicaItem, val INDEX: Int)
+fun des(Respuesta: String):OBJ {
+    val OBJ = Respuesta.substring(Respuesta.indexOf("Semipresencial"), Respuesta.indexOf(", ,"))
+    Log.d("FORMATOO","{\""+OBJ+"}")
+    try {
+
+        val result = Gson().fromJson("{\""+OBJ+"}", CargaAcademicaItem::class.java)
+        Log.d("RESULTADO",result.toString())
+        return OBJ(result ,Respuesta.indexOf(", ,"))
+    } catch (e: Exception) {
+        Log.e("RESPUESTA DES", "Error al convertir JSON: ${e.message}")
+        return OBJ(CargaAcademicaItem(),0)
+    }
 }
+
+
 val XMLAcceso = """
     <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
