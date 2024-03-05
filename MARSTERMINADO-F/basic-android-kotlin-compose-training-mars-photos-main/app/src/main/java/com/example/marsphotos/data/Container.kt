@@ -31,8 +31,11 @@ class DefaultContainer: Container
       val REPOCarga:  CargaAcademicaByAlumno by lazy {
         retrofit.create(CargaAcademicaByAlumno::class.java)
     }
+    val REPOCALI:  Calificacionesin by lazy {
+        retrofit.create(Calificacionesin::class.java)
+    }
     override val REP: REPO by lazy {
-        Iniciar(REPOLogin, REPOCarga)
+        Iniciar(REPOLogin, REPOCarga,REPOCALI)
     }
 
 }

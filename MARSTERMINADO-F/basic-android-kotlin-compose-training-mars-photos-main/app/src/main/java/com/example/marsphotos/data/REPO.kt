@@ -2,6 +2,7 @@ package com.example.marsphotos.data
 
 import android.util.Log
 import com.example.marsphotos.model.ALUMNO
+import com.example.marsphotos.model.Calificaciones
 import com.example.marsphotos.model.CargaAcademicaItem
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
@@ -18,13 +19,14 @@ import retrofit2.http.POST
 
 interface REPO{
     suspend fun Login(matricula: String, password: String): ALUMNO
-    suspend fun CargaAcademicaByAlumno(): String
+    suspend fun CargaAcademicaByAlumno(): List<CargaAcademicaItem>
+    suspend fun Calificaciones(): List<Calificaciones>
 }
 class Iniciar(
-    val Login : InterLogin,
-    val CARGA : CargaAcademicaByAlumno,
-    var XMLA : String = XMLAcceso.trimIndent(),
-    var XMLC : String = XMLCARGA.trimIndent()
+    val Login : InterLogin, val CARGA : CargaAcademicaByAlumno, val Cali : Calificacionesin,
+
+    var XMLA : String = XMLAcceso.trimIndent(), var XMLC : String = XMLCARGA.trimIndent(),
+    val XMLCAL :String = XMLCALIFI.trimIndent()
 ) : REPO
 {
     override suspend fun Login(matricula: String, password: String): ALUMNO {
@@ -41,14 +43,11 @@ class Iniciar(
                 return result
             }
         } catch (e: Exception) {
-            // Manejo de la excepción. Puedes imprimir un mensaje de registro o realizar otras acciones.
             Log.e("ERROR", "Error durante el proceso de login: ${e.message}", e)
         }
-
-        // Si hay algún error, o la respuesta es nula, devuelve un objeto ALUMNO con valores por defecto.
         return ALUMNO("", "", "", "")
     }
-    override suspend fun CargaAcademicaByAlumno(): String {
+    override suspend fun CargaAcademicaByAlumno():  List<CargaAcademicaItem> {
         try {
             val PETICION = XMLC.toRequestBody()
             var lista = mutableListOf<CargaAcademicaItem>()
@@ -58,42 +57,83 @@ class Iniciar(
             if (respuesta != null) {
              var Tamres = respuesta.toString().length
                 var count =  1
-                Log.d("-------- ", respuesta.toString().indexOf("Semipresencial").toString()+ " TAMAÑO "+ respuesta.toString().indexOf(", ,").toString())
+                while (count < Tamres-1)
+                {
+                    val objetoA = des(respuesta.toString().substring(count,Tamres-1))
+                    count = count + objetoA.INDEX
+                    if(objetoA.CARGA.Materia!="")
+                    {
+                        lista.add(objetoA.CARGA)
+                    }
+                }
+                 Log.d("LISTA", lista.toString())
 
-                     val objetoA = des(respuesta.toString().substring(count,Tamres-10))
-
-                    Log.d("OBJ ", objetoA.toString())
-
-               // Log.d("RESULTADO", lista.toString())
-
-                return respuesta.toString()
+                return lista
             }
         } catch (e: Exception) {
             // Manejo de la excepción. Puedes imprimir un mensaje de registro o realizar otras acciones.
             Log.e("ERROR", "Error durante el proceso de carga académica: ${e.message}", e)
         }
-
-        // Si hay algún error, o la respuesta es nula, devuelve una cadena de resultado por defecto.
-        return "result"
+        return listOf()
     }
+    override suspend fun Calificaciones(): List<Calificaciones> {
+        try {
+            val PETICION = XMLCAL.toRequestBody()
+            var lista = mutableListOf<Calificaciones>()
+            var respuesta = Cali.Cali(PETICION).string().split("{", "}")
+            Log.d("RESPUESTA", respuesta.toString())
 
+            if (respuesta != null) {
+                var Tamres = respuesta.toString().length
+                var count =  1
+                while (count < Tamres-1)
+                {
+                    val objetoA = desCali(respuesta.toString().substring(count,Tamres-1))
+                    count = count + objetoA.INDEX
+                    if(objetoA.CALI.Materia!="")
+                    {
+                        lista.add(objetoA.CALI)
+                    }
+                }
+                Log.d("LISTA", lista.toString())
+
+                return lista
+            }
+        } catch (e: Exception) {
+            // Manejo de la excepción. Puedes imprimir un mensaje de registro o realizar otras acciones.
+            Log.e("ERROR", "Error durante el proceso de carga académica: ${e.message}", e)
+        }
+        return listOf()
+    }
 }
+//------------------------------------------METODOS------------------------------------------
 data class OBJ(val CARGA: CargaAcademicaItem, val INDEX: Int)
+data class OBJCALI(val CALI: Calificaciones, val INDEX: Int)
 fun des(Respuesta: String):OBJ {
-    val OBJ = Respuesta.substring(Respuesta.indexOf("Semipresencial"), Respuesta.indexOf(", ,"))
-    Log.d("FORMATOO","{\""+OBJ+"}")
     try {
-
+        val OBJ = Respuesta.substring(Respuesta.indexOf("Semipresencial"), Respuesta.indexOf(", ,"))
+        Log.d("OBJETO SUBSTRING",OBJ.toString())
         val result = Gson().fromJson("{\""+OBJ+"}", CargaAcademicaItem::class.java)
         Log.d("RESULTADO",result.toString())
-        return OBJ(result ,Respuesta.indexOf(", ,"))
+        return OBJ(result ,Respuesta.indexOf(", ,")+2)
     } catch (e: Exception) {
         Log.e("RESPUESTA DES", "Error al convertir JSON: ${e.message}")
-        return OBJ(CargaAcademicaItem(),0)
+        return OBJ(CargaAcademicaItem(),5000)
     }
 }
-
-
+fun desCali(Respuesta: String):OBJCALI {
+    try {
+        val OBJ = Respuesta.substring(Respuesta.indexOf("Observaciones"), Respuesta.indexOf(", ,"))
+        Log.d("OBJETO SUBSTRING",OBJ.toString())
+        val result = Gson().fromJson("{\""+OBJ+"}", Calificaciones::class.java)
+        Log.d("RESULTADO",result.toString())
+        return OBJCALI(result ,Respuesta.indexOf(", ,")+2)
+    } catch (e: Exception) {
+        Log.e("RESPUESTA DES", "Error al convertir JSON: ${e.message}")
+        return OBJCALI(Calificaciones(),5000)
+    }
+}
+//------------------------------------------XML------------------------------------------
 val XMLAcceso = """
     <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
@@ -107,13 +147,20 @@ val XMLAcceso = """
       </soap:Body>
     </soap:Envelope>
 """
-const val XMLCARGA =""" 
+val XMLCARGA =""" 
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <getCargaAcademicaByAlumno xmlns="http://tempuri.org/" />
   </soap:Body>
 </soap:Envelope>"""
+val XMLCALIFI = """<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <getCalifUnidadesByAlumno xmlns="http://tempuri.org/" />
+  </soap:Body>
+</soap:Envelope>"""
+//------------------------------------------INTERFACE------------------------------------------
 interface InterLogin {
     @Headers(
         "Content-Type: text/xml",
@@ -132,5 +179,12 @@ interface CargaAcademicaByAlumno
 
     @POST("ws/wsalumnos.asmx")
     suspend fun CARGA(@Body requestBody: RequestBody): ResponseBody
+}
+interface Calificacionesin
+{
+    @Headers(  "Content-Type: text/xml",
+        "SOAPAction: \"http://tempuri.org/getCalifUnidadesByAlumno\"")
 
+    @POST("ws/wsalumnos.asmx")
+    suspend fun Cali(@Body requestBody: RequestBody): ResponseBody
 }

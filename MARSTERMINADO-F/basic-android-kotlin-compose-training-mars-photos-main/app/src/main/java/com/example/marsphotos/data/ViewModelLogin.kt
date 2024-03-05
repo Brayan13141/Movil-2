@@ -14,6 +14,8 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.marsphotos.MarsPhotosApplication
 import com.example.marsphotos.model.ALUMNO
+import com.example.marsphotos.model.Calificaciones
+import com.example.marsphotos.model.CargaAcademicaItem
 import com.example.marsphotos.ui.Nav.PantallasNav
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,7 @@ class VIEWLOGIN(Acciones: REPO) : ViewModel() {
     var AL by mutableStateOf(ALUMNO("","","",""))
     var Ncontrol by mutableStateOf("S20120185")
     var Contraseña by mutableStateOf("P%o48D_")
+    var lista = listOf<CargaAcademicaItem>()
 
     val Acciones =Acciones
 
@@ -41,14 +44,17 @@ class VIEWLOGIN(Acciones: REPO) : ViewModel() {
     {
         viewModelScope.launch {
           AL = Acciones.Login(M,C)
-        }
+         }
         if (AL.matricula != "")
         {
             return true
         }else
         return false
     }
-
+ fun CARGA(Lista : List<CargaAcademicaItem>)
+ {
+     lista = Lista
+ }
 
 
     companion object {

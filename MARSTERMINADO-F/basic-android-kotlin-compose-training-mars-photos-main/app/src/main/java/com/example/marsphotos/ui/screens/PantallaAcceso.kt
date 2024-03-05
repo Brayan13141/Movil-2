@@ -43,6 +43,7 @@ import androidx.navigation.NavHostController
 import com.example.marsphotos.R
 import com.example.marsphotos.data.VIEWLOGIN
 import com.example.marsphotos.model.ALUMNO
+import com.example.marsphotos.ui.Nav.PantallasNav
 import kotlinx.coroutines.launch
 
 
@@ -106,10 +107,17 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             CampoDetalle(icon = Icons.Default.Check, label = "Acceso", value = alumno.acceso)
             Button(onClick = {
                 Rutina.launch {
-                    viewModel.Acciones.CargaAcademicaByAlumno()
-                    Log.d("ENTRO","--------------------")
-                } }) {
+                   viewModel.CARGA(viewModel.Acciones.CargaAcademicaByAlumno())
+                    navController.navigate(PantallasNav.CARGA.route)
+                } }
+            ) {
                 Text(text = "CARGA")
+            }
+            Button(onClick = {
+                Rutina.launch {
+                    viewModel.Acciones.Calificaciones()
+                } }) {
+                Text(text = "CALIFICACIÓN")
             }
         }
     }
