@@ -1,10 +1,7 @@
 package com.example.marsphotos.data
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -16,30 +13,23 @@ import com.example.marsphotos.MarsPhotosApplication
 import com.example.marsphotos.model.ALUMNO
 import com.example.marsphotos.model.Calificaciones
 import com.example.marsphotos.model.CargaAcademicaItem
-import com.example.marsphotos.ui.Nav.PantallasNav
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.lang.reflect.AccessibleObject
 
 class VIEWLOGIN(Acciones: REPO) : ViewModel() {
     var AL by mutableStateOf(ALUMNO("","","",""))
     var Ncontrol by mutableStateOf("S20120185")
     var Contraseña by mutableStateOf("P%o48D_")
-    var lista = listOf<CargaAcademicaItem>()
-
+    var listaCarga = listOf<CargaAcademicaItem>()
+    var listaCalificacion = listOf<Calificaciones>()
     val Acciones =Acciones
 
 
     fun fNcontrol(value: String){
         Ncontrol = value
     }
-
     fun fContraseña(value: String){
         Contraseña = value
     }
-
     fun IniciarSesion(M : String, C : String) : Boolean
     {
         viewModelScope.launch {
@@ -51,11 +41,14 @@ class VIEWLOGIN(Acciones: REPO) : ViewModel() {
         }else
         return false
     }
- fun CARGA(Lista : List<CargaAcademicaItem>)
- {
-     lista = Lista
- }
-
+     fun CARGA(Lista : List<CargaAcademicaItem>)
+     {
+         listaCarga = Lista
+     }
+    fun CALIFICACION(Lista : List<Calificaciones>)
+    {
+        listaCalificacion = Lista
+    }
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

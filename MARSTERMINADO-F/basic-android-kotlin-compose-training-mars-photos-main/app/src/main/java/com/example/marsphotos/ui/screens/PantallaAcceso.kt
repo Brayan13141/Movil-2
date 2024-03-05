@@ -78,8 +78,9 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             .padding(16.dp)
     ) {
         item {
+            Spacer(modifier = Modifier.size(30.dp))
             Image(
-                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                painter = painterResource(id = R.drawable.alumno),
                 contentDescription = null,
                 modifier = Modifier
                     .size(120.dp)
@@ -115,7 +116,8 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             }
             Button(onClick = {
                 Rutina.launch {
-                    viewModel.Acciones.Calificaciones()
+                  viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
+                    navController.navigate(PantallasNav.CALI.route)
                 } }) {
                 Text(text = "CALIFICACIÓN")
             }

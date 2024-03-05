@@ -3,6 +3,7 @@ package com.example.marsphotos.ui.screens
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
@@ -42,11 +43,11 @@ fun PantallaInicio(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
-        // Imagen de carga
+       Spacer(modifier = Modifier.size(100.dp))
         Image(
             modifier = Modifier.size(200.dp),
-            painter = painterResource(R.drawable.loading_img),
-            contentDescription = stringResource(R.string.loading)
+            painter = painterResource(R.drawable.logo),
+            contentDescription = "ITSUR"
         )
         TextField(value = viewModel.Ncontrol,
             onValueChange = {viewModel.fNcontrol(it)}
