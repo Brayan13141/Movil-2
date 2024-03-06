@@ -15,7 +15,7 @@ import com.example.marsphotos.model.Calificaciones
 import com.example.marsphotos.model.CargaAcademicaItem
 import kotlinx.coroutines.launch
 
-class VIEWLOGIN(Acciones: REPO) : ViewModel() {
+class VIEWLOGIN (Acciones: REPO) : ViewModel() {
     var AL by mutableStateOf(ALUMNO("","","",""))
     var Ncontrol by mutableStateOf("S20120185")
     var Contraseña by mutableStateOf("P%o48D_")
@@ -33,18 +33,18 @@ class VIEWLOGIN(Acciones: REPO) : ViewModel() {
     fun IniciarSesion(M : String, C : String) : Boolean
     {
         viewModelScope.launch {
-          AL = Acciones.Login(M,C)
-         }
+            AL = Acciones.Login(M,C)
+        }
         if (AL.matricula != "")
         {
             return true
         }else
-        return false
+            return false
     }
-     fun CARGA(Lista : List<CargaAcademicaItem>)
-     {
-         listaCarga = Lista
-     }
+    fun CARGA(Lista : List<CargaAcademicaItem>)
+    {
+        listaCarga = Lista
+    }
     fun CALIFICACION(Lista : List<Calificaciones>)
     {
         listaCalificacion = Lista
@@ -52,11 +52,11 @@ class VIEWLOGIN(Acciones: REPO) : ViewModel() {
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
-          initializer {
+            initializer {
                 val app = (this[APPLICATION_KEY] as MarsPhotosApplication)
                 val R = app.container.REP
                 VIEWLOGIN(Acciones = R)
-          }
+            }
         }
     }
 }

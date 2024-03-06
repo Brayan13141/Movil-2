@@ -86,7 +86,7 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
                     .size(120.dp)
                     .clip(shape = MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.primary)
-                    //.align(Alignment.CenterHorizontally)
+                //.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -100,7 +100,7 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-       val alumno = viewModel.AL
+        val alumno = viewModel.AL
         item {
             CampoDetalle(icon = Icons.Default.Person, label = "Matrícula", value = alumno.matricula)
             CampoDetalle(icon = Icons.Default.Lock, label = "Contraseña", value = alumno.contrasenia)
@@ -108,7 +108,7 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             CampoDetalle(icon = Icons.Default.Check, label = "Acceso", value = alumno.acceso)
             Button(onClick = {
                 Rutina.launch {
-                   viewModel.CARGA(viewModel.Acciones.CargaAcademicaByAlumno())
+                    viewModel.CARGA(viewModel.Acciones.CargaAcademicaByAlumno())
                     navController.navigate(PantallasNav.CARGA.route)
                 } }
             ) {
@@ -116,7 +116,7 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             }
             Button(onClick = {
                 Rutina.launch {
-                  viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
+                    viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
                     navController.navigate(PantallasNav.CALI.route)
                 } }) {
                 Text(text = "CALIFICACIÓN")

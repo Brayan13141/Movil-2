@@ -43,7 +43,7 @@ fun PantallaInicio(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
-       Spacer(modifier = Modifier.size(100.dp))
+        Spacer(modifier = Modifier.size(100.dp))
         Image(
             modifier = Modifier.size(200.dp),
             painter = painterResource(R.drawable.logo),
@@ -56,7 +56,7 @@ fun PantallaInicio(
             onValueChange = {viewModel.fContraseña(it)}
         )
         var B by remember {
-          mutableStateOf(true)
+            mutableStateOf(true)
         }
         val Rutina = rememberCoroutineScope()
         BotonIngresar {
@@ -69,7 +69,7 @@ fun PantallaInicio(
             }
         }
         if (B==false) {
-                B = SimpleErrorDialog()
+            B = SimpleErrorDialog()
 
         }
     }

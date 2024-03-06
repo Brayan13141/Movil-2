@@ -31,7 +31,7 @@ fun App(
         }
         composable(PantallasNav.SESION.route) {
             PantallaSesion(myViewModel, modifier = Modifier,navController)
-
+            //PantallaSesion(alumno = ALUMNO)
         }
         composable(PantallasNav.CARGA.route) {
             CargaAcademicaList(myViewModel,navController)

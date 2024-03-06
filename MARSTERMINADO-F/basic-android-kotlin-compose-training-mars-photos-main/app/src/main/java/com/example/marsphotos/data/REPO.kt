@@ -124,7 +124,7 @@ fun des(Respuesta: String):OBJ {
 fun desCali(Respuesta: String):OBJCALI {
     try {
         val OBJ = Respuesta.substring(Respuesta.indexOf("Observaciones"), Respuesta.indexOf(", ,"))
-        Log.d("OBJETO SUBSTRING",OBJ)
+        Log.d("OBJETO SUBSTRING",OBJ.toString())
         val result = Gson().fromJson("{\""+OBJ+"}", Calificaciones::class.java)
         Log.d("RESULTADO",result.toString())
         return OBJCALI(result ,Respuesta.indexOf(", ,")+2)
