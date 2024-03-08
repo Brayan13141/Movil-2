@@ -1,5 +1,6 @@
 package com.example.marsphotos.data
 
+import android.view.View
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.marsphotos.BDLOCAL.REPO.REPOIMPLEMENT
 import com.example.marsphotos.MarsPhotosApplication
 import com.example.marsphotos.model.ALUMNO
 import com.example.marsphotos.model.Calificaciones
@@ -16,14 +19,12 @@ import com.example.marsphotos.model.CargaAcademicaItem
 import kotlinx.coroutines.launch
 
 class VIEWLOGIN (Acciones: REPO) : ViewModel() {
-    var AL by mutableStateOf(ALUMNO("","","",""))
+    var AL by mutableStateOf(ALUMNO(1,"","","",""))
     var Ncontrol by mutableStateOf("S20120185")
     var Contraseña by mutableStateOf("P%o48D_")
     var listaCarga = listOf<CargaAcademicaItem>()
     var listaCalificacion = listOf<Calificaciones>()
     val Acciones =Acciones
-
-
     fun fNcontrol(value: String){
         Ncontrol = value
     }
@@ -37,8 +38,11 @@ class VIEWLOGIN (Acciones: REPO) : ViewModel() {
         }
         if (AL.matricula != "")
         {
+            AL.Id=1
+
             return true
-        }else
+        }
+        else
             return false
     }
     fun CARGA(Lista : List<CargaAcademicaItem>)

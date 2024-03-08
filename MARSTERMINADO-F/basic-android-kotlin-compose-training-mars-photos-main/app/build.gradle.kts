@@ -19,6 +19,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.serialization") version "1.9.10"
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
+
 }
 
 android {
@@ -82,9 +84,20 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:1.0.0-alpha07")
     implementation ("com.google.code.gson:gson:2.8.8")
     //Room
+    implementation("androidx.work:work-runtime-ktx:2.8.1")
+    val room_version = "2.6.1"
     implementation ("androidx.room:room-runtime:2.6.1")
     //ksp("androidx.room:room-compiler:2.6.1")
+    //ksp("androidx.room:room-compiler:2.5.0")
+    kapt("androidx.room:room-compiler:$room_version")
     implementation ("androidx.room:room-ktx:2.6.1")
+
+
+    implementation ("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+
+
+
 
 
     implementation ("org.jetbrains.kotlinx:kotlinx-serialization-core:1.3.0")

@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,14 +43,17 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.marsphotos.R
 import com.example.marsphotos.data.VIEWLOGIN
+import com.example.marsphotos.data.ViewModelLocal
 import com.example.marsphotos.model.ALUMNO
 import com.example.marsphotos.ui.Nav.PantallasNav
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 @Composable
 fun PantallaSesion2(
-    viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
+     viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
     navController: NavHostController
 ) {
     Column {
@@ -67,11 +71,24 @@ fun PantallaSesion2(
 
 
 @Composable
-fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
+fun PantallaSesion(
+    viewModel2: ViewModelLocal = viewModel(factory = ViewModelLocal.Factory),
+    viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
                    navController: NavController
 ) {
-
+    var bandera = 0
+    var alumno = ALUMNO(1,"","","","")
+    var alumno2 = ALUMNO(1,"","","","")
+if(bandera==0)
+{
+    alumno = viewModel.AL
+    viewModel2.guardarDetalles(alumno)
+    alumno2 = viewModel2.ObtenerDetalles(1)
+    Log.d("ALUMNO BD", alumno2.toString() + " BANDERA "+bandera.toString())
+    bandera==1
+}
     val Rutina = rememberCoroutineScope()
+
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -100,29 +117,35 @@ fun PantallaSesion(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-        val alumno = viewModel.AL
-        item {
-            CampoDetalle(icon = Icons.Default.Person, label = "Matrícula", value = alumno.matricula)
-            CampoDetalle(icon = Icons.Default.Lock, label = "Contraseña", value = alumno.contrasenia)
-            CampoDetalle(icon = Icons.Default.Warning, label = "Estatus", value = alumno.estatus)
-            CampoDetalle(icon = Icons.Default.Check, label = "Acceso", value = alumno.acceso)
-            Button(onClick = {
-                Rutina.launch {
-                    viewModel.CARGA(viewModel.Acciones.CargaAcademicaByAlumno())
-                    navController.navigate(PantallasNav.CARGA.route)
-                } }
-            ) {
-                Text(text = "CARGA")
-            }
-            Button(onClick = {
-                Rutina.launch {
-                    viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
-                    navController.navigate(PantallasNav.CALI.route)
-                } }) {
-                Text(text = "CALIFICACIÓN")
+        if(alumno.matricula != "" || alumno2.matricula != "")
+        {
+            item {
+                CampoDetalle(icon = Icons.Default.Person, label = "Matrícula", value = if (alumno.matricula != "") alumno.matricula else  if (alumno2.matricula!="") alumno2.matricula else "NO JALO")
+                CampoDetalle(icon = Icons.Default.Lock, label = "Contraseña", value = if (alumno.contrasenia != "") alumno.contrasenia else if (alumno2.contrasenia!="") alumno2.contrasenia else "NO JALO")
+                CampoDetalle(icon = Icons.Default.Warning, label = "Estatus", value =if (alumno.estatus != "") alumno.estatus else if (alumno2.estatus!="") alumno2.estatus else "NO JALO")
+                CampoDetalle(icon = Icons.Default.Check, label = "Acceso", value = if (alumno.acceso != "") alumno.acceso else if (alumno2.acceso!="") alumno2.acceso else "NO JALO")
+                Row {
+                    Button(onClick = {
+                        Rutina.launch {
+                            viewModel.CARGA(viewModel.Acciones.CargaAcademicaByAlumno())
+                            navController.navigate(PantallasNav.CARGA.route)
+                        } }
+                    ) {
+                        Text(text = "CARGA")
+                    }
+                    Button(onClick = {
+                        Rutina.launch {
+                            viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
+                            navController.navigate(PantallasNav.CALI.route)
+                        } }) {
+                        Text(text = "CALIFICACIÓN")
+                    }
+                }
             }
         }
+
     }
+
 }
 
 @Composable

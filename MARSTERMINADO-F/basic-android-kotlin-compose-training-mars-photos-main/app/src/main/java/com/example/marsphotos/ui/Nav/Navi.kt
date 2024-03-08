@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.marsphotos.data.VIEWLOGIN
+import com.example.marsphotos.data.ViewModelLocal
 import com.example.marsphotos.model.ALUMNO
 import com.example.marsphotos.model.Calificaciones
 import com.example.marsphotos.model.CargaAcademicaItem
@@ -18,10 +19,14 @@ import com.example.marsphotos.ui.screens.PantallaSesion
 
 @Composable
 fun App(
-    viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory)) {
+    viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory),
+    viewModel2: ViewModelLocal = viewModel(factory = ViewModelLocal.Factory)
+) {
     val navController = rememberNavController()
     val myViewModel: VIEWLOGIN = viewModel
-    // Set up navigation graph
+    val myViewModel2: ViewModelLocal = viewModel2
+
+
     NavHost(
         navController = navController,
         startDestination = PantallasNav.LOGIN.route
@@ -30,7 +35,7 @@ fun App(
             PantallaInicio(myViewModel,navController)
         }
         composable(PantallasNav.SESION.route) {
-            PantallaSesion(myViewModel, modifier = Modifier,navController)
+            PantallaSesion(myViewModel2,myViewModel, modifier = Modifier,navController)
             //PantallaSesion(alumno = ALUMNO)
         }
         composable(PantallasNav.CARGA.route) {

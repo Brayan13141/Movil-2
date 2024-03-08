@@ -38,7 +38,12 @@ fun PantallaInicio(
     viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory),
     navController: NavController
 ) {
-
+    var B by remember {
+        mutableStateOf(true)
+    }
+    var SESIONBD by remember {
+        mutableStateOf(false)
+    }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 16.dp)
@@ -55,22 +60,26 @@ fun PantallaInicio(
         TextField(value = viewModel.Contraseña,
             onValueChange = {viewModel.fContraseña(it)}
         )
-        var B by remember {
-            mutableStateOf(true)
-        }
         val Rutina = rememberCoroutineScope()
         BotonIngresar {
             Rutina.launch {
                 B = viewModel.IniciarSesion(viewModel.Ncontrol,viewModel.Contraseña)
                 if (B)
                 {
+
                     navController.navigate(PantallasNav.SESION.route)
                 }
             }
         }
+        if(SESIONBD) {
+            Button(onClick = {
+                navController.navigate(PantallasNav.SESION.route)} ) {
+            Text(text = "OFFLINE")
+            }
+        }
         if (B==false) {
             B = SimpleErrorDialog()
-
+            SESIONBD=true
         }
     }
 }
@@ -103,6 +112,6 @@ private fun BotonIngresar(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier//.padding(vertical = 16.dp)
     ) {
-        Text("Ingresar")
+        Text("INGRESAR")
     }
 }

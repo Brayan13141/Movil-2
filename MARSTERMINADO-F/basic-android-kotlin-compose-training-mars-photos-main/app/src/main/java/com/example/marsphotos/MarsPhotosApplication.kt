@@ -16,14 +16,23 @@
 package com.example.marsphotos
 
 import android.app.Application
+import com.example.marsphotos.BDLOCAL.AppContainer
+import com.example.marsphotos.BDLOCAL.ContainerLocal
 import com.example.marsphotos.data.Container
 import com.example.marsphotos.data.DefaultContainer
 
+
+
 class MarsPhotosApplication : Application() {
     /** AppContainer instance used by the rest of classes to obtain dependencies */
+//CONTAINER DE SICE
     lateinit var container: Container
+//CONTAINER DE LA BDLOCAL
+    lateinit var container2: AppContainer
+
     override fun onCreate() {
         super.onCreate()
         container = DefaultContainer()
+        container2 = ContainerLocal(this)
     }
 }

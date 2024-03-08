@@ -1,6 +1,7 @@
 package com.example.marsphotos.model
 
 data class ALUMNO(
+    var Id : Int?,
     var matricula : String,
     var contrasenia : String,
     var estatus : String,

@@ -45,7 +45,7 @@ class Iniciar(
         } catch (e: Exception) {
             Log.e("ERROR", "Error durante el proceso de login: ${e.message}", e)
         }
-        return ALUMNO("", "", "", "")
+        return ALUMNO(0,"", "", "", "")
     }
     override suspend fun CargaAcademicaByAlumno():  List<CargaAcademicaItem> {
         try {
