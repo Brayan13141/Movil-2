@@ -50,26 +50,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-
-@Composable
-fun PantallaSesion2(
-     viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
-    navController: NavHostController
-) {
-    Column {
-        Text(text = "-----------")
-        Text("----------------------", modifier = modifier
-            .size(20.dp)
-            .background(Color.Black))
-        Image(
-            modifier = Modifier.size(200.dp),
-            painter = painterResource(R.drawable.loading_img),
-            contentDescription = stringResource(R.string.loading)
-        )
-    }
-}
-
-
 @Composable
 fun PantallaSesion(
     viewModel2: ViewModelLocal = viewModel(factory = ViewModelLocal.Factory),
@@ -82,8 +62,8 @@ fun PantallaSesion(
 if(bandera==0)
 {
     alumno = viewModel.AL
-    viewModel2.guardarDetalles(alumno)
-    alumno2 = viewModel2.ObtenerDetalles(1)
+   //viewModel2.guardarDetalles(alumno)
+    //alumno2 = viewModel2.ObtenerDetalles(1)
     Log.d("ALUMNO BD", alumno2.toString() + " BANDERA "+bandera.toString())
     bandera==1
 }
@@ -127,7 +107,7 @@ if(bandera==0)
                 Row {
                     Button(onClick = {
                         Rutina.launch {
-                            viewModel.CARGA(viewModel.Acciones.CargaAcademicaByAlumno())
+                           viewModel.OBTENERCARGA()
                             navController.navigate(PantallasNav.CARGA.route)
                         } }
                     ) {
@@ -135,7 +115,7 @@ if(bandera==0)
                     }
                     Button(onClick = {
                         Rutina.launch {
-                            viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
+                          //  viewModel.CALIFICACION(viewModel.Acciones.Calificaciones())
                             navController.navigate(PantallasNav.CALI.route)
                         } }) {
                         Text(text = "CALIFICACIÓN")

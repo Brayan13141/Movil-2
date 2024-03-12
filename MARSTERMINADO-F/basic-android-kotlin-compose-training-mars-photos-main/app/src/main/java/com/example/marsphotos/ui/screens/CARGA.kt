@@ -1,5 +1,6 @@
 package com.example.marsphotos.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ fun CargaAcademicaList(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Fact
     LazyColumn {
         items(viewModel.listaCarga?.size ?: 0) { index -> // Handle null list
             val item = viewModel.listaCarga?.get(index) // Safe access
+            Log.d("ITEM CARGA",item.toString())
             if (item != null) {
                 Column(
                  modifier = androidx.compose.ui.Modifier.fillMaxWidth()

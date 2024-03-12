@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.marsphotos.R
-import com.example.marsphotos.data.REPO
 import com.example.marsphotos.data.VIEWLOGIN
 import com.example.marsphotos.ui.Nav.PantallasNav
 import kotlinx.coroutines.delay
@@ -63,11 +62,12 @@ fun PantallaInicio(
         val Rutina = rememberCoroutineScope()
         BotonIngresar {
             Rutina.launch {
-                B = viewModel.IniciarSesion(viewModel.Ncontrol,viewModel.Contraseña)
+                B = viewModel.ingresar(viewModel.Ncontrol,viewModel.Contraseña)
                 if (B)
                 {
-
                     navController.navigate(PantallasNav.SESION.route)
+                }else{
+                    SESIONBD=true
                 }
             }
         }

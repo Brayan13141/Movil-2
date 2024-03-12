@@ -1,5 +1,6 @@
 package com.example.marsphotos.data
 
+import android.content.Context
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Response
@@ -7,13 +8,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory
 
 interface Container {
-  val REP : REPO
+  val REP : REPOSICE
 }
 
 private const val BASE_URL =
     "https://sicenet.surguanajuato.tecnm.mx"
 
-class DefaultContainer: Container
+class DefaultContainer(context: Context): Container
 {
       val interceptor= CookiesInterceptor()
 
@@ -34,8 +35,12 @@ class DefaultContainer: Container
     val REPOCALI:  Calificacionesin by lazy {
         retrofit.create(Calificacionesin::class.java)
     }
-    override val REP: REPO by lazy {
-        Iniciar(REPOLogin, REPOCarga,REPOCALI)
+
+    override val REP: REPOSICE by lazy {
+        Iniciar(REPOLogin, REPOCarga,REPOCALI,context)
+    }
+    companion object{
+        var instance: Container?=null
     }
 
 }
