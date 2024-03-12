@@ -24,7 +24,7 @@ import retrofit2.http.POST
 
 interface REPOSICE{
     suspend fun Login(matricula: String, password: String): ALUMNO
-    suspend fun CargaAcademicaByAlumno(): List<CargaAcademicaItem>
+    suspend fun CargaAcademicaByAlumno(): String// List<CargaAcademicaItem>
     suspend fun Calificaciones(): List<Calificaciones>
 }
 class Iniciar(
@@ -50,7 +50,7 @@ class Iniciar(
         }
         return ALUMNO(0,"", "", "", "")
     }
-    override suspend fun CargaAcademicaByAlumno():  List<CargaAcademicaItem> {
+    override suspend fun CargaAcademicaByAlumno(): String { // List<CargaAcademicaItem> {
         try {
             val PETICION = XMLC.toRequestBody()
             var lista = mutableListOf<CargaAcademicaItem>()
@@ -58,7 +58,7 @@ class Iniciar(
             //Log.d("RESPUESTA", respuesta.toString())
 
             if (respuesta != null) {
-             var Tamres = respuesta.toString().length
+           /*  var Tamres = respuesta.toString().length
                 var count =  1
                 while (count < Tamres-1)
                 {
@@ -72,12 +72,14 @@ class Iniciar(
                  Log.d("LISTA", lista.toString())
 
                 return lista
+            */
+            return respuesta.toString()
             }
         } catch (e: Exception) {
             // Manejo de la excepción. Puedes imprimir un mensaje de registro o realizar otras acciones.
             Log.e("ERROR", "Error durante el proceso de carga académica: ${e.message}", e)
         }
-        return listOf()
+        return "listOf"
     }
     override suspend fun Calificaciones(): List<Calificaciones> {
         try {

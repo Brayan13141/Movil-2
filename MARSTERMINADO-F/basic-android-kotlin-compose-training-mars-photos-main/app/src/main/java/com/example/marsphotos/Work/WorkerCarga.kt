@@ -22,7 +22,7 @@ class WorkerCarga(ctx: Context, params: WorkerParameters,
         return try {
             val CARGA = repoSice.CargaAcademicaByAlumno() // Llamar a la función Login de REPOSICE
 
-            Log.d("WORKER CARGA", CARGA.toString())
+            Log.d("WORKER CARGA", CARGA)
             if (CARGA != null) {
                 // Inicio de sesión correcto: realizar las tareas en segundo plano necesarias según la lógica de su aplicación
                 Log.d(TAG, "CARGA ACADEMICA RECUPERADA")
@@ -31,7 +31,6 @@ class WorkerCarga(ctx: Context, params: WorkerParameters,
                     "CARGA" to CARGA.toString()
                 )
                 Result.success(datos)
-
 
             } else {
                 // Error de inicio de sesión: manejar el error de forma adecuada

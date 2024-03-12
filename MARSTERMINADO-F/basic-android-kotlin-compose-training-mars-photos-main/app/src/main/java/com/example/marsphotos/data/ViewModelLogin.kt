@@ -52,7 +52,6 @@ class VIEWLOGIN (
     }
     fun OBTENERCARGA() : Boolean
     {
-        //var AL1 = ALUMNO(null,"","","","")
         try {
             val workManager = WorkManager.getInstance(CON)
             val CARGAWorkRequest = OneTimeWorkRequest.Builder(WorkerCarga::class.java)
