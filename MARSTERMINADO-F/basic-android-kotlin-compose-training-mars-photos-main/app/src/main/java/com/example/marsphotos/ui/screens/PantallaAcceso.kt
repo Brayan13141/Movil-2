@@ -1,6 +1,8 @@
 package com.example.marsphotos.ui.screens
 
+import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -54,18 +56,20 @@ import kotlinx.coroutines.runBlocking
 fun PantallaSesion(
     viewModel2: ViewModelLocal = viewModel(factory = ViewModelLocal.Factory),
     viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory), modifier: Modifier = Modifier,
-                   navController: NavController
+                   navController: NavController,
+    context: Context
 ) {
     var bandera = 0
     var alumno = ALUMNO(1,"","","","")
     var alumno2 = ALUMNO(1,"","","","")
-if(bandera==0)
+if(viewModel.bandera==1)
 {
     alumno = viewModel.AL
-   //viewModel2.guardarDetalles(alumno)
-    //alumno2 = viewModel2.ObtenerDetalles(1)
+    viewModel2.guardarDetalles(alumno)
+}else{
+    alumno2 = viewModel2.ObtenerDetalles(1)
+    viewModel.bandera=2
     Log.d("ALUMNO BD", alumno2.toString() + " BANDERA "+bandera.toString())
-    bandera==1
 }
     val Rutina = rememberCoroutineScope()
 
@@ -97,7 +101,7 @@ if(bandera==0)
             )
             Spacer(modifier = Modifier.height(8.dp))
         }
-        if(alumno.matricula != "" || alumno2.matricula != "")
+        if(alumno.matricula != "" && viewModel.bandera==1|| alumno2.matricula != "" && viewModel.bandera==2)
         {
             item {
                 CampoDetalle(icon = Icons.Default.Person, label = "Matrícula", value = if (alumno.matricula != "") alumno.matricula else  if (alumno2.matricula!="") alumno2.matricula else "NO JALO")
@@ -123,7 +127,7 @@ if(bandera==0)
                 }
             }
         }
-
+        item {Text(text = alumno2.toString())}
     }
 
 }

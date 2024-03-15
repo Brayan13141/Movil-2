@@ -10,7 +10,7 @@ import com.example.marsphotos.data.ViewModelLocal
 object VIEWPROVIDER {
     val Factory = viewModelFactory {
         initializer {
-            ViewModelLocal(MarsPhotosApplication().container2.REPOLOCAL)
+            ViewModelLocal(MarsPhotosApplication().container2.REPOLOCAL,this.MarsPhotosApplication().applicationContext)
         }
     }
 }

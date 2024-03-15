@@ -9,21 +9,25 @@ import androidx.room.RoomDatabase
 /**
  * Database class with a singleton Instance object.
  */
-@Database(entities = [EntityDetalles::class], version = 1)
-abstract class BD : RoomDatabase() {
+@Database(entities = [EntityDetalles::class], version = 1, exportSchema = false)
+abstract class   BD : RoomDatabase() {
 
     abstract fun DAO(): DAO
 
     companion object {
         @Volatile
-        private var Instance: BD? = null
+        private var INSTANCE: BD? = null
         fun getDatabase(context: Context): BD {
-                return Instance ?: synchronized(this) {
-                    Room.databaseBuilder(context, BD ::class.java, "BDLOCAL")
-                        .build()
-                        .also { Instance = it }
-                }
-
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    BD::class.java,
+                    "BDSICENET")
+                    .fallbackToDestructiveMigration()
+                    .build()
+                INSTANCE = instance
+                return instance
+            }
         }
     }
 }

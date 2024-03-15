@@ -8,7 +8,7 @@ data class EntityDetalles(
     @PrimaryKey
     val id: Int?,
     var Ncontrol : String = "",
-    var Contraseña : String = "",
+    var Contraseña : String? = null,
     var Estado : String = "",
     var Acceso : String = ""
 )

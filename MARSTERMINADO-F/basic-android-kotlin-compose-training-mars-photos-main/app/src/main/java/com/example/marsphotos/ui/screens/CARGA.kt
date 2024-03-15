@@ -1,69 +1,107 @@
 package com.example.marsphotos.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.marsphotos.data.VIEWLOGIN
 import com.example.marsphotos.model.CargaAcademicaItem
-import java.lang.reflect.Modifier
-
 @Composable
-fun CargaAcademicaList(viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory),
-                       navController: NavController
+fun CargaAcademicaList(
+    viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory),
+    navController: NavController
 ) {
-    LazyColumn {
-        items(viewModel.listaCarga?.size ?: 0) { index -> // Handle null list
-            val item = viewModel.listaCarga?.get(index) // Safe access
-            Log.d("ITEM CARGA",item.toString())
-            if (item != null) {
-                Column(
-                 modifier = androidx.compose.ui.Modifier.fillMaxWidth()
-                     .padding(16.dp)
-                     .background(MaterialTheme.colorScheme.surface)
-                ) {
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp)
+        ) {
+            items(viewModel.listaCarga?.size ?: 0) { index ->
+                val item = viewModel.listaCarga?.get(index)
+                if (item != null) {
+                    TarjetaCargaAcademica(item = item) {
+                        // Handle item click here
+                        // navController.navigate("pantallaDetalle/${item.id}")
+                    }
+                }
+            }
+            item {
+                // Display a placeholder for "Loading..." or "No data" if necessary
+                if (viewModel.listaCarga?.isEmpty() == true) {
                     Text(
-                        text = "Materia: ${item.Materia}", // Assuming `nombre` is a property
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                    Text(
-                        text = "Grupo: ${item.Grupo}", // Assuming `grupo` is a property
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Docente: ${item.Docente}", // Assuming `grupo` is a property
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Lunes: ${item.Lunes}", // Assuming `grupo` is a property
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Martes: ${item.Martes}", // Assuming `grupo` is a property
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Miercoles: ${item.Miercoles}", // Assuming `grupo` is a property
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Jueves: ${item.Jueves}", // Assuming `grupo` is a property
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = "Viernes: ${item.Viernes}", // Assuming `grupo` is a property
+                        text = "No hay carga académica disponible",
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun TarjetaCargaAcademica(item: CargaAcademicaItem, onClick: () -> Unit) {
+    var mostrarDetalles by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp)
+            .clickable(onClick = { mostrarDetalles = !mostrarDetalles }),
+        shape = RoundedCornerShape(8.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = item.Materia,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = "Grupo: ${item.Grupo}", style = MaterialTheme.typography.bodyMedium)
+            Text(text = "Docente: ${item.Docente}", style = MaterialTheme.typography.bodyMedium)
+
+            // Mostrar detalles solo si el estado es verdadero
+            if (mostrarDetalles) {
+                Text(
+                    text = "Lunes: ${item.Lunes}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Martes: ${item.Martes}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Miércoles: ${item.Miercoles}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Jueves: ${item.Jueves}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Text(
+                    text = "Viernes: ${item.Viernes}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
             }
         }
     }

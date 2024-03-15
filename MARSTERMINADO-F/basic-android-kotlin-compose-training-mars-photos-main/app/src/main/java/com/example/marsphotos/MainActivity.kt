@@ -38,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     //MarsPhotosApp()
 
                     //val navController = rememberNavController()
-                    App()
+                    App(context = this)
                    // PantallaInicio(LoginView = Login(),navController)
                 }
             }

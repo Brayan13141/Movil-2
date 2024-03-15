@@ -1,116 +1,146 @@
 package com.example.marsphotos.ui.screens
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.marsphotos.R
 import com.example.marsphotos.data.VIEWLOGIN
 import com.example.marsphotos.ui.Nav.PantallasNav
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
 fun PantallaInicio(
     viewModel: VIEWLOGIN = viewModel(factory = VIEWLOGIN.Factory),
-    navController: NavController
+    navController: NavController,
+    context: Context
 ) {
-    var B by remember {
-        mutableStateOf(true)
-    }
-    var SESIONBD by remember {
-        mutableStateOf(false)
-    }
+    var showDialog by remember { mutableStateOf(false) }
+    var offlineSession by remember { mutableStateOf(false) }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         Spacer(modifier = Modifier.size(100.dp))
+
         Image(
             modifier = Modifier.size(200.dp),
             painter = painterResource(R.drawable.logo),
             contentDescription = "ITSUR"
         )
-        TextField(value = viewModel.Ncontrol,
-            onValueChange = {viewModel.fNcontrol(it)}
+
+        TextField(
+            value = viewModel.Ncontrol,
+            onValueChange = { viewModel.fNcontrol(it) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
-        TextField(value = viewModel.Contraseña,
-            onValueChange = {viewModel.fContraseña(it)}
+
+        TextField(
+            value = viewModel.Contraseña,
+            onValueChange = { viewModel.fContraseña(it) },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
         )
-        val Rutina = rememberCoroutineScope()
+
+        val coroutineScope = rememberCoroutineScope()
+
         BotonIngresar {
-            Rutina.launch {
-                B = viewModel.ingresar(viewModel.Ncontrol,viewModel.Contraseña)
-                if (B)
+            coroutineScope.launch {
+
+                if(isInternetAvailable(context)==true){
+                    if (viewModel.ingresar(viewModel.Ncontrol, viewModel.Contraseña)==true) {
+                        viewModel.bandera=1
+                        navController.navigate(PantallasNav.SESION.route)
+                    } else {
+                        showDialog = true
+
+                    }
+                }else
                 {
-                    navController.navigate(PantallasNav.SESION.route)
-                }else{
-                    SESIONBD=true
+                    offlineSession = true
+                    Toast.makeText(context,"NO HAY CONEXION",Toast.LENGTH_SHORT).show()
                 }
+
             }
         }
-        if(SESIONBD) {
-            Button(onClick = {
-                navController.navigate(PantallasNav.SESION.route)} ) {
-            Text(text = "OFFLINE")
+        if (showDialog) {
+            SimpleErrorDialog(onDismiss = { showDialog = false })
+        }
+        if (offlineSession) {
+            Button(
+                onClick = { navController.navigate(PantallasNav.SESION.route)
+                    viewModel.bandera=2
+                          },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
+                Text("OFFLINE")
             }
         }
-        if (B==false) {
-            B = SimpleErrorDialog()
-            SESIONBD=true
+
+    }
+}
+private fun isInternetAvailable(context: Context): Boolean {
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    if(connectivityManager != null){
+        val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+        if(capabilities != null){
+            if(capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)){
+                return true
+            }
+            else if(capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
+                return true
+            }
+            else if(capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)){
+                return true
+            }
         }
     }
+    return false
 }
 @Composable
-fun SimpleErrorDialog(): Boolean {
-    var dialogClosed by remember { mutableStateOf(false) }
-
-    if (!dialogClosed) {
-        AlertDialog(
-            onDismissRequest = {
-                dialogClosed = true
-            },
-            title = { Text("Error") },
-            text = { Text("Hubo un error al procesar la solicitud.") },
-            confirmButton = {
-                TextButton(onClick = {
-                    dialogClosed = true
-                }) {
-                    Text("Aceptar")
-                }
+fun SimpleErrorDialog(onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = {
+            onDismiss()
+        },
+        title = { Text("Error") },
+        text = { Text("Hubo un error al procesar la solicitud.") },
+        confirmButton = {
+            TextButton(onClick = {
+                onDismiss()
+            }) {
+                Text("Aceptar")
             }
-        )
-    }
-
-    return dialogClosed
+        }
+    )
 }
+
 @Composable
 private fun BotonIngresar(onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        modifier = Modifier//.padding(vertical = 16.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 16.dp)
     ) {
         Text("INGRESAR")
     }

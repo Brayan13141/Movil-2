@@ -1,7 +1,8 @@
-package com.example.marsphotos.Work
+package com.example.marsphotos.WORKS.SICE
 
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -14,7 +15,7 @@ class WorkerLOGIN(ctx: Context, params: WorkerParameters,
              //val repoBd: REPOSUSPEND
 ) : CoroutineWorker(ctx, params) {
     val para = params.inputData
-
+    val context = ctx
     var repoSice = (ctx.applicationContext as MarsPhotosApplication).container.REP
     override suspend fun doWork(): Result {
         return try {
@@ -32,6 +33,8 @@ class WorkerLOGIN(ctx: Context, params: WorkerParameters,
                         "contrasenia" to alumno.contrasenia,
                         "acceso" to alumno.acceso,
                         "estatus" to alumno.estatus,)
+                    /*Toast.makeText(context,"SE INICIO CON DATOS DE LA BASE DE DATOS",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context,"AUUMNO :"+Al.toString(), Toast.LENGTH_SHORT).show()*/
                     Result.success(Al)
                 } else {
                     // Error de inicio de sesión: manejar el error de forma adecuada

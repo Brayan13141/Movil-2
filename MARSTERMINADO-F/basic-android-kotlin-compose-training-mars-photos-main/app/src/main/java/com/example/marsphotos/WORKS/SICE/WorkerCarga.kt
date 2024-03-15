@@ -1,10 +1,9 @@
-package com.example.marsphotos.Work
+package com.example.marsphotos.WORKS.SICE
 
 
 import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
-import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.example.marsphotos.MarsPhotosApplication

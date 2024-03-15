@@ -2,15 +2,13 @@ package com.example.marsphotos.data
 
 import android.content.Context
 import android.util.Log
-import android.view.View
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.work.Data
@@ -19,32 +17,39 @@ import androidx.work.ListenableWorker
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.example.marsphotos.BDLOCAL.REPO.REPOIMPLEMENT
+import com.example.marsphotos.BDLOCAL.BD.EntityDetalles
 import com.example.marsphotos.BDLOCAL.REPO.REPOSUSPEND
 import com.example.marsphotos.MarsPhotosApplication
-import com.example.marsphotos.Work.WorkerCarga
-import com.example.marsphotos.Work.WorkerLOGIN
+import com.example.marsphotos.WORKS.BD.WorkerLOGIN_INSERTARBD
+import com.example.marsphotos.WORKS.SICE.WorkerCarga
+import com.example.marsphotos.WORKS.SICE.WorkerLOGIN
 import com.example.marsphotos.model.ALUMNO
 import com.example.marsphotos.model.Calificaciones
 import com.example.marsphotos.model.CargaAcademicaItem
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.concurrent.Executors
+
 class VIEWLOGIN (
     REPO : REPOSICE,
+    viewModelLocal: ViewModelLocal,
     private val context: Context
 ) : ViewModel() {
+    var bandera by mutableStateOf(0)
     var AL by mutableStateOf(ALUMNO(1,"","","",""))
     var Ncontrol by mutableStateOf("S20120185")
     var Contraseña by mutableStateOf("P%o48D_")
     var listaCarga = listOf<CargaAcademicaItem>()
     var listaCalificacion = listOf<Calificaciones>()
     val CON = context
+    //val repoBD = REPOBD
+    val  viewLocal = viewModelLocal
     fun fNcontrol(Usuario: String ){
-        Ncontrol = Usuario
+        this.Ncontrol = Usuario
     }
     fun fContraseña(contraseña: String){
-        Contraseña = contraseña
+        this.Contraseña = contraseña
     }
     fun ViewModelAlumno(AL:ALUMNO)
     {
@@ -102,9 +107,14 @@ class VIEWLOGIN (
             val loginWorkRequest = OneTimeWorkRequest.Builder(WorkerLOGIN::class.java)
                 .setInputData(data)
                 .build()
+
             workManager.beginUniqueWork("Login_Worker", ExistingWorkPolicy.REPLACE, loginWorkRequest)
-            workManager.enqueue(loginWorkRequest)
-            WorkManager.getInstance(CON).getWorkInfoByIdLiveData(loginWorkRequest.id)
+            workManager.enqueue(loginWorkRequest) .result.addListener(Runnable {
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context,"SE INICIO CON DATOS DEL SERVIDOR",Toast.LENGTH_SHORT).show()
+                }
+            }, Executors.newSingleThreadExecutor())
+                WorkManager.getInstance(CON).getWorkInfoByIdLiveData(loginWorkRequest.id)
                 .observeForever { workInfo ->
                     if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
                         val result = workInfo.outputData
@@ -112,9 +122,11 @@ class VIEWLOGIN (
                         val contrasenia = result.getString("contrasenia")
                         val acceso = result.getString("acceso")
                         val estatus = result.getString("estatus")
-                        AL1 =ALUMNO(null,matricula.toString(),contrasenia.toString(),estatus.toString(),acceso.toString())
+                        AL1 =ALUMNO(1,matricula.toString(),contrasenia.toString(),estatus.toString(),acceso.toString())
                         ViewModelAlumno(AL1)
-                        Log.d("ALUMNO RECUPERADO CON WORK",AL1.toString())
+                        bandera=1
+//--------------------------------------------------------INSERTA EN BD---------------------------------------------------------
+                        viewLocal.guardarDetalles(AL1)
                     }
                 }
             return true
@@ -124,6 +136,7 @@ class VIEWLOGIN (
             return false
         }
     }
+
     fun CARGA(Lista : List<CargaAcademicaItem>)
     {
         listaCarga = Lista
@@ -138,8 +151,10 @@ class VIEWLOGIN (
             initializer {
                 val app = (this[APPLICATION_KEY] as MarsPhotosApplication)
                 val R = app.container.REP
+                val R2 = app.container2.REPOLOCAL
                // val W = app.container3.WORK
-                VIEWLOGIN(REPO = R,this.MarsPhotosApplication().applicationContext)
+                VIEWLOGIN(REPO = R,
+                    ViewModelLocal(R2,this.MarsPhotosApplication().applicationContext),this.MarsPhotosApplication().applicationContext)
 
             }
         }
